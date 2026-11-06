@@ -1,0 +1,4 @@
+project:
+    name: databricks-dbt-airflow
+webserver:
+    port: "8080"
