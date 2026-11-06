@@ -1,0 +1,12 @@
+databricks_transformation:
+  target: dev
+  outputs:
+    dev:
+      type: databricks
+      method: token
+      host: https://dbc-e2be3664-7793.cloud.databricks.com
+      http_path: /sql/1.0/warehouses/c20263243f3aa4c0
+      token: "{{ env_var('DATABRICKS_TOKEN') }}"
+      catalog: default
+      schema: dbt_new_dev
+      threads: 4
