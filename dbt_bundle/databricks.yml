@@ -1,0 +1,44 @@
+# This is a Declarative Automation Bundle definition for dbt_bundle.
+bundle:
+  name: dbt_bundle
+  uuid: 7d16816c-47cf-4f09-9841-1684156bdb03
+
+include:
+  - resources/*.yml
+
+artifacts:
+  python_artifact:
+    type: whl
+    build: uv build --wheel
+
+# Variable declarations populated via environment variables or defaults
+variables:
+  catalog:
+    description: The catalog to use
+    default: ${env:DATABRICKS_CATALOG:-workspace}
+  schema:
+    description: The schema to use
+    default: ${env:DATABRICKS_SCHEMA:-default}
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://dbc-e2be3664-7793.cloud.databricks.com
+    variables:
+      catalog: ${var.catalog}
+      # Fallback to current user's short name if schema env variable isn't set
+      schema: ${env:DATABRICKS_SCHEMA:-${workspace.current_user.short_name}}
+
+  prod:
+    mode: production
+    workspace:
+      host: https://dbc-e2be3664-7793.cloud.databricks.com
+      root_path: /Workspace/Users/ganeshgadade157@gmail.com/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      catalog: ${env:DATABRICKS_CATALOG:-workspace}
+      schema: ${env:DATABRICKS_SCHEMA:-prod}
+    permissions:
+      - user_name: ganeshgadade157@gmail.com
+        level: CAN_MANAGE
